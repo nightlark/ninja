@@ -7,6 +7,34 @@ on:
     types: published
 
 jobs:
+  one:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
+        
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -29,7 +57,15 @@ jobs:
       run: sudo apt-get install re2c
     - name: Install macOS dependencies
       if: matrix.os == 'macOS-latest'
-      run: brew install re2c p7zip cmake
+      run: |
+        wget https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.13.sdk.tar.xz
+        tar -xf MacOSX10.13.sdk.tar.xz -C /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+        ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+        /usr/libexec/PlistBuddy -c "Print" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
+        #/usr/libexec/PlistBuddy -c "Set :MinimumSDKVersion 10.13" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
+        #/usr/libexec/PlistBuddy -c "Print :MinimumSDKVersion" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
+        xcodebuild -showsdks
+        brew install re2c p7zip cmake
     - name: Install Windows dependencies
       if: matrix.os == 'windows-latest'
       run: choco install re2c
