@@ -54,6 +54,7 @@ jobs:
     - name: Install Linux dependencies
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install re2c
+    # Note: by default, MinimumSDKVersion is set to 10.11 on the XCode version installed on the GitHub Actions VM, so the set line is not needed for newer SDKs
     - name: Install macOS dependencies
       if: matrix.os == 'macOS-latest'
       run: |
@@ -61,8 +62,8 @@ jobs:
         tar -xf MacOSX10.13.sdk.tar.xz -C /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
         ls /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
         /usr/libexec/PlistBuddy -c "Print" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
-        #/usr/libexec/PlistBuddy -c "Set :MinimumSDKVersion 10.10" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
-        #/usr/libexec/PlistBuddy -c "Print :MinimumSDKVersion" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
+        /usr/libexec/PlistBuddy -c "Set :MinimumSDKVersion 10.10" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
+        /usr/libexec/PlistBuddy -c "Print :MinimumSDKVersion" /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Info.plist
         xcodebuild -showsdks
         brew install re2c p7zip cmake
     - name: Install Windows dependencies
